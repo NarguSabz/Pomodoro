@@ -6,31 +6,115 @@
         xmlns:local="clr-namespace:PomodoroTimer"
         mc:Ignorable="d"
         Title="Pomodoro" Height="450" Width="800">
-
+    <Window.Resources>
+        <Style x:Key="styleBoutonListeTextBox">
+            <Setter Property="Control.HorizontalAlignment" Value="Left"/>
+            <Setter Property="Control.Margin" Value="5"/>
+        </Style>
+        <Style x:Key="stylePrevision">
+            <Setter Property="Control.Margin" Value="5"/>
+        </Style>
+        <Style x:Key="styleTimer">
+            <Setter Property="TextBlock.FontSize" Value="80"/>
+            <Setter  Property="Control.HorizontalAlignment" Value="Center"/>
+        </Style>
+        <Style x:Key="styleTextBox" BasedOn="{StaticResource styleBoutonListeTextBox}">
+            <Setter Property="Control.Height" Value="150"/>
+            <Setter Property="Control.Width" Value="390"/>
+        </Style>
+    </Window.Resources>
     <Window.CommandBindings>
         <CommandBinding x:Name="CommandedDemarrerPomodoro"
-                        Command="{x:Static local:MainWindow.cmdDemarrerPomodoro}"
+                        Command="{x:Static local:MainWindow.CmdDemarrerPomodoro}"
                         CanExecute="CommandedDemarrerPomodoro_CanExecute"
                         Executed="CommandedDemarrerPomodoro_Executed"/>
 
         <CommandBinding x:Name="CommandeInterromprePomodoro"
-                        Command="{x:Static local:MainWindow.cmdInterromprePomodoro}"
+                        Command="{x:Static local:MainWindow.CmdInterromprePomodoro}"
                         CanExecute="CommandeInterromprePomodoro_CanExecute"
                         Executed="CommandeInterromprePomodoro_Executed"/>
+
+        <CommandBinding x:Name="CommandeAjouterTache"
+                        Command="{x:Static local:MainWindow.CmdAjouterTache}"
+                        CanExecute="CmdAjouterTache_CanExecute"
+                        Executed="CmdAjouterTache_Executed"/>
+
+        <CommandBinding x:Name="CommandeAjouterNombrePomodoro"
+                        Command="{x:Static local:MainWindow.CmdAjouterNombrePomodoro}"
+                        CanExecute="CmdAjouterNombrePomodoro_CanExecute"
+                        Executed="CmdAjouterNombrePomodoro_Executed"/>
+
+        <CommandBinding x:Name="CommandeDiminuerNombrePomodoro"
+                        Command="{x:Static local:MainWindow.CmdDiminuerNombrePomodoro}"
+                        CanExecute="CmdDiminuerNombrePomodoro_CanExecute"
+                        Executed="CmdDiminuerNombrePomodoro_Executed"/>
+        <CommandBinding x:Name="CommandeSupprimerTache"
+                        Command="{x:Static local:MainWindow.CmdSupprimerTache}"
+                        CanExecute="CmdSupprimerTache_CanExecute"
+                        Executed="CmdSupprimerTache_Executed"/>
     </Window.CommandBindings>
 
     <Grid>
-        <StackPanel>
-        <Button Command="{x:Static local:MainWindow.cmdDemarrerPomodoro}"
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="400"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Column="1">
+            <!--il faut de dataBinding ici-->
+            <WrapPanel>
+                <StackPanel  >
+                    <TextBlock Style="{StaticResource styleBoutonListeTextBox}">Statut de la tâche:</TextBlock>
+                    <TextBlock Style="{StaticResource styleBoutonListeTextBox}" Text="Pomodoros complétés:"/>
+                    <TextBlock Style="{StaticResource styleBoutonListeTextBox}" Text="Pomodoros prévues:"/>
+                    <Button Style="{StaticResource styleBoutonListeTextBox}" Command="{x:Static local:MainWindow.CmdDemarrerPomodoro}"
                         Content="Démarrer pomodoro"
                         Width="150"/>
+                </StackPanel>
+                <StackPanel >
+                    <TextBlock Name="StatutTache" Style="{StaticResource styleBoutonListeTextBox}" Text="{Binding StatutTachee, Mode=OneWay}"/>
+                    <TextBlock Style="{StaticResource styleBoutonListeTextBox}" Text="{Binding PomodorosCompleteeTache, Mode=OneWay}"/>
+                    <TextBlock Style="{StaticResource styleBoutonListeTextBox}" Text="{Binding PomodorosPrevueTache, Mode=OneWay}"/>
 
-        <Button Command="{x:Static local:MainWindow.cmdInterromprePomodoro}"
+                    <Button Style="{StaticResource styleBoutonListeTextBox}" Command="{x:Static local:MainWindow.CmdInterromprePomodoro}"
                         Content="Interrompre pomodoro"
                         Width="150"/>
-
-            <TextBlock Name="TextTemps"
+                </StackPanel>
+            </WrapPanel>
+            <TextBlock Style="{StaticResource styleTimer}" Name="TextTemps"
                    Text="00:00"/>
+            <TextBlock Style="{StaticResource styleBoutonListeTextBox}" Text="Nouvelle tâche:"/>
+            <!--il faut de dataBinding ici-->
+            <TextBox Name="DescriptionTache" Style="{StaticResource styleTextBox}"/>
+            <WrapPanel>
+                <TextBlock Style="{StaticResource stylePrevision}" Text="Préviosions(pomodoro):"/>
+                <TextBlock Name="NombrePomodoros" Style="{StaticResource stylePrevision}" Text="0"/>
+                <Button Style="{StaticResource stylePrevision}" Command="{x:Static local:MainWindow.CmdAjouterNombrePomodoro}"
+                        Content="+"
+                        Width="15"/>
+                <Button Style="{StaticResource stylePrevision}" Command="{x:Static local:MainWindow.CmdDiminuerNombrePomodoro}"
+                        Content="-"
+                         Width="15"/>
+                <Button Style="{StaticResource stylePrevision}" Command="{x:Static local:MainWindow.CmdAjouterTache}"
+                        Content="Ajouter tâche"
+                         HorizontalAlignment="Stretch"/>
+            </WrapPanel>
+        </StackPanel>
+        <StackPanel>
+            <TextBlock Text="Liste des tâches:"/>
+            <ListBox Name="ListboxTaches" Height="250" Margin="5" ItemsSource="{Binding ListeTaches}" SelectedIndex="{Binding IndiceTacheSelectionne, Mode=TwoWay}"></ListBox>
+            <WrapPanel>
+                <StackPanel Width="150">
+                    <TextBlock Text="Filtres:"/>
+                </StackPanel>
+                <StackPanel>
+                    <CheckBox Style="{StaticResource styleBoutonListeTextBox}" Name="filtreEnCours" IsChecked="True"  >Tâches en cours</CheckBox>
+                    <CheckBox Style="{StaticResource styleBoutonListeTextBox}" Name="filtrePlanifiee" IsChecked="True" >Tâches planifiées</CheckBox>
+                    <CheckBox Style="{StaticResource styleBoutonListeTextBox}" Name="filtreCompletee" IsChecked="False">Tâches complétées</CheckBox>
+                    <Button Style="{StaticResource stylePrevision}" Command="{x:Static local:MainWindow.CmdSupprimerTache}"
+                        Content="Supprimer la tâche"/>
+                </StackPanel>
+            </WrapPanel>
         </StackPanel>
     </Grid>
 </Window>
+
