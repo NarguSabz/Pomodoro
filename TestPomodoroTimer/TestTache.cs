@@ -16,8 +16,8 @@ namespace TestPomodoroTimer
         [Test]
         public void TestCreation()
         {
-            tacheTestee = new Tache();
-            Assert.IsNotNull(tacheTestee);
+            tacheTestee = new Tache("", 1, 1, StatutTache.PLANIFIEE);
+            Assert.AreEqual(tacheTestee.StatutTachee, StatutTache.EN_COURS);
         }
     }
 }
